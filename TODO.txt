@@ -1,0 +1,4 @@
+TODO:
+Should we turn off UART module when finish one round and re-enable it again?
+
+We must re-write the send_bpsk.c function to let it works in LPM;
