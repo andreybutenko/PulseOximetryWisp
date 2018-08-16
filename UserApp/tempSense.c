@@ -13,7 +13,7 @@
 #include "../common/globals.h"
 #include "tempSense.h"
 #include "../common/timer.h"
-#include "../common/e-paper.h"
+//#include "../common/e-paper.h"
 
 //=============================================================================
 //								Variables
@@ -77,7 +77,7 @@ resultData tempSense(void){
 	if(data.x>=X_end){
 		data.x= X_end;
 		//TODO clear E-ink Display and redraw
-		imageUpdateState=IMG_UPDATE;
+		//imageUpdateState=IMG_UPDATE;
 		//temp = 0;
 		senseState =  X_end-1;
 	}

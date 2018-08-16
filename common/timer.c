@@ -7,7 +7,7 @@
  */
 
 #include "timer.h"
-#include "e-paper.h"
+//#include "e-paper.h"
 
 
 /******************************************************************************
@@ -119,7 +119,7 @@ __interrupt void timeOutISR(void) {
 			RX_WAKEUP_EN_DIR &= ~RX_WAKEUP_EN_BIT;
 			RX_WAKEUP_IFG &= ~(RX_WAKEUP_BIT);
 			doNFC_state = NFC_Sleep;
-			imageUpdateState = SENSE_UPDATE;
+			//imageUpdateState = SENSE_UPDATE;
 			RTC_ctr = 0;
 			debug_interrupt = 3;	// DEBUGGING INTERRUPT
 			__bic_SR_register_on_exit(LPM4_bits | GIE);

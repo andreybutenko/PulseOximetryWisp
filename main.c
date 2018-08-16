@@ -28,7 +28,7 @@
 
 #include "common/globals.h"
 #include "NFC_protocol/doNFC.h"
-#include "common/e-paper.h"
+//#include "common/e-paper.h"
 #include "common/fram_memory.h"
 #include "common/accel.h"
 #include "UserApp/myApp.h"

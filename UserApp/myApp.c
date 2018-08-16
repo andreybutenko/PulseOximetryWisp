@@ -8,8 +8,8 @@
 //									Includes
 //=============================================================================
 #include "../common/globals.h"
-#include "../common/e-paper.h"
-#include "myE-paperApp.h"
+//#include "../common/e-paper.h"
+//#include "myE-paperApp.h"
 #include "tempSense.h"
 #include "img_data.h"
 #include "../common/accel.h"
@@ -45,31 +45,9 @@ volatile uint8_t			accelState;
 */
 void initMyDemo1(void){
 
-	//Initialize the real time clock for sample sensor at given intervals
-	initRTC(RTC_3s);
-
-	//Initial sensing state machine
-	imageUpdateState = IMG_UPDATE;
-	//imageUpdateState = IMG_HALT;
-
-	//inital senseng state and senseng data buffer
-	accelState = 0;
-	senseCtr=0;
-	buf_full=0;
-	sense_buf_ptr = &sense_buf[0];
-	sense_read_ptr = &sense_buf[0];
 }
 
 
-/**
-*	@fun	initial imageUpdateState for image updates demo
-*/
-void initMyDemo2(void){
-	//TA1CTL = 0;	//ACLK, upmode, 4khz clk
-	//TA1CCTL0 &=~CCIE;
-	//initRTC(RTC_15s);
-	imageUpdateState = IMG_HALT;
-}
 
 
 
@@ -79,10 +57,6 @@ void initMyDemo2(void){
 *			will not save sensor data into the buffer
 */
 void Demo1(void) {
-	if((doNFC_state==NFC_Sleep)&&(imageUpdateState)){
-		updateDisplay1((uint8_t*)templete);
-		imageUpdateState = IMG_HALT;
-	}
 }
 
 /**
@@ -95,7 +69,7 @@ void Demo1(void) {
 *			reive more energy from cell-phone
 */
 void Demo2(void){
-	if((doNFC_state==NFC_Sleep)&&(imageUpdateState==IMG_UPDATE)||(imageUpdateState==IMG_FORCE_UPDATE)){
+	if((doNFC_state==NFC_Sleep)){
 		//memset(imageBuffer,0,E_INK_SIZE);//Comment this line to save power
 #ifdef BATT_FREE
 		// Set the switch pin(P1.0) to ouput direction
@@ -114,7 +88,7 @@ void Demo2(void){
 		// Set the switch pin(P1.0) to HIGH
 		//SW_1_OUT |= SW_1_BIT;
 
-		updateDisplay2((uint8_t*)imageBuffer);
+		//updateDisplay2((uint8_t*)imageBuffer);
 
 		// Set the switch pin(P1.0) to LOW
 		//SW_1_OUT &= ~SW_1_BIT;
@@ -123,7 +97,7 @@ void Demo2(void){
 #ifdef BATT_FREE
 		//lowPowerSleep(LPM_10ms);
 #endif
-		imageUpdateState = IMG_HALT;
+		//imageUpdateState = IMG_HALT;
 	}
 }
 

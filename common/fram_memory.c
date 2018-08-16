@@ -5,7 +5,7 @@
  *****************************************************************************/
 
 #include "fram_memory.h"
-#include "e-paper.h"
+//#include "e-paper.h"
 
 uint8_t const FRAM_Sleep[] = {0xB9};
 uint8_t const ReadStatus[] = {0x05,0x00};
@@ -208,53 +208,6 @@ void SPI_FRAM_Read_Memory_func(const uint8_t *bufferAddress, uint8_t* rx_buffer,
 
 } //end SPI write memory
 
-
-void SPI_FRAM_Read_Image(const uint8_t *bufferAddress,
-		uint16_t lengthData) {
-	// CS low
-
-	//uint8_t testArray[5807];
-	SPI_CS_MEM_OUT &= ~SPI_CS_MEM_BIT;
-
-	// send the op code
-	uint16_t i;
-	for (i = 0; i < 1; ++i) {
-		while (!(UCB1IFG & UCTXIFG) || (UCB1STAT & UCBUSY)) {
-		}
-		UCB1TXBUF = 0x03; //op code for reading memory (READ)
-	}
-
-	// wait for last byte to clear SPI
-	while (0 != (UCB1STAT & UCBUSY)) {
-	}
-
-	//send the 18-bit address
-	for (i= 0; i < 3; ++i) {
-		while (!(UCB1IFG & UCTXIFG) || (UCB1STAT & UCBUSY)) {
-		}
-		UCB1TXBUF = bufferAddress[2 - i];
-	}
-
-	// clock out the 8-byte data
-	while (0 != (UCB1STAT & UCBUSY)) {
-	}
-
-	for (i = 0; i < lengthData; ++i) {
-		while (!(UCB1IFG & UCTXIFG) || (UCB1STAT & UCBUSY)) {
-		}
-		UCB1TXBUF = 0xff;
-		while (!(UCB1IFG & UCRXIFG) || (UCB1STAT & UCBUSY)) {
-		}
-		imageBuffer[i] = UCB1RXBUF;
-	}
-
-	// wait for last byte to clear SPI
-	while (0 != (UCB1STAT & UCBUSY)) {
-	}
-
-	// CS high
-	SPI_CS_MEM_OUT |= SPI_CS_MEM_BIT;
-} //end SPI write memory
 
 /**
  * Initialize the FRAM module and put it to sleep

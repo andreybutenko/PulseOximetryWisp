@@ -16,6 +16,5 @@ void SPI_FRAM_Write_Memory(const uint8_t *bufferAddress,const uint8_t *bufferDat
 uint8_t * SPI_FRAM_Read_Memory(const uint8_t *bufferAddress,uint16_t lengthData);
 void SPI_FRAM_Enter_Sleep(void);
 void SPI_FRAM_Wake_Up(void);
-void SPI_FRAM_Read_Image(const uint8_t *bufferAddress,uint16_t lengthData);
 void SPI_FRAM_Read_Memory_func(const uint8_t *bufferAddress, uint8_t* rx_buffer, uint16_t lengthData);
 
