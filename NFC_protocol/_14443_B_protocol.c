@@ -203,7 +203,7 @@ uint8_t _14443_B_protocol(unsigned char num_bytes) {
         //index = nfc_wisp_protocol(&rx_buffer[9], index);
     /////////////////////////////////////////////
     // R Block
-    // rule:   When an R(ACK) block with a block number not equal to the current PICC’s block number is received, the
+    // rule:   When an R(ACK) block with a block number not equal to the current PICCï¿½s block number is received, the
      //   	PICC toggles its block number before sending a block
     /////////////////////////////////////////////
     }else if((rx_buffer[0] & 0xE6) == 0xA2){ //R Block{

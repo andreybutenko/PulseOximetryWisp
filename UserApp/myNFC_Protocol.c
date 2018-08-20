@@ -74,73 +74,70 @@ void initialize_nfc_wisp_protocol() {
 }
 
 unsigned char nfc_wisp_protocol(unsigned char * inf_received, unsigned char index) {
-		int i;
-		uint8_t j;
-		const int max_sample = 16;
-		uint8_t rxbuf[4];
+    int i;
+    uint8_t j;
+    const int max_sample = 8; // original 16
+    const int read_iterations = 4; // original 4
+    uint8_t rxbuf[4];
 
-		if(temp_read) {
-			temp_read = 0;
-			I2C_config();
-			I2C_Tx_config(0x57);
-			I2C_Tx(0x06, 0x03);
-			I2C_Tx(0x07, 0x47); // 0x47
-			I2C_Tx(0x09, 0x64);
-			//I2C_Tx(0x09, 0x99);
-		}
+    if(temp_read) {
+        temp_read = 0;
+        I2C_config();
+        I2C_Tx_config(0x57);
+        I2C_Tx(0x06, 0x03);
+        I2C_Tx(0x07, 0x47); // 0x47
+        I2C_Tx(0x09, 0x64);
+        //I2C_Tx(0x09, 0x99);
+    }
 
-		P1DIR |= 0x10;
-		P1SEL &= ~0x10;
-		P1OUT &= ~0x10;
+    P1DIR |= 0x10;
+    P1SEL &= ~0x10;
+    P1OUT &= ~0x10;
 
-		//ir_i = 0;
-		//red_i = 0;
-		if(sample_req) {
-			sample_req = 0;
-			uint32_t bufferAddress = 0;
-			uint8_t txbuffer[4];
+    if(sample_req) {
+        sample_req = 0;
+        uint32_t bufferAddress = 0;
+        uint8_t txbuffer[4];
 
-			for(i = 0; i < max_sample; i++) {
-				P1OUT |= 0x10;
-				I2C_config();
-				I2C_Tx_config(0x57);
-				I2C_Rx(0x05, 4);
+        for(i = 0; i < max_sample; i++) {
+            P1OUT |= 0x10;
+            I2C_config();
+            I2C_Tx_config(0x57);
+            I2C_Rx(0x05, 4);
 
+            for(j = 0; j < 4; j++) {
+                txbuffer[j] = PRxData[j];
+            }
 
-				for(j = 0; j < 4; j++) {
-					txbuffer[j] = PRxData[j];
-				}
+            SPI_initialize();
+            SPI_FRAM_Wake_Up();
+            SPI_FRAM_Write_Enable_Latch();
+            SPI_FRAM_Write_Memory((uint8_t *) &bufferAddress, txbuffer, 4);
 
+            // 20 bytes, index must be less than 60
+            bufferAddress += 4;
+            lowPowerSleep(LPM_5ms + LPM_500us * 2 + LPM_50us);
+            P1OUT &= ~0x10;
+        }
 
+    }
 
-				SPI_initialize();
-				SPI_FRAM_Wake_Up();
-				SPI_FRAM_Write_Enable_Latch();
-				SPI_FRAM_Write_Memory((uint8_t *) &bufferAddress, txbuffer, 4);
+    SPI_initialize();
 
-				// 20 bytes, index must be less than 60
-				bufferAddress += 4;
-				lowPowerSleep(LPM_5ms + LPM_500us * 2 + LPM_50us);
-				P1OUT &= ~0x10;
-			}
-
-		}
-		SPI_initialize();
-		//for(k = 0; k < max_sample; k++) { // test loop
-		for(i = 0; i < 4; i++) {
-			// read from fram
-			SPI_FRAM_Read_Memory_func((uint8_t *) &fram_addr, rxbuf, 4);
-			for(j = 0; j < 4; j++) {
-				transmitCommand[index + i * 4 + j] = rxbuf[j];
-			}
-			fram_addr += 4;
-		}
-		//} // end test loop
-		index += 16;
-		if(fram_addr >= 	max_sample * 4) {
-			fram_addr = 0;
-			sample_req = 1;
-		}
+    for(i = 0; i < 4; i++) {
+        // read from fram
+        SPI_FRAM_Read_Memory_func((uint8_t *) &fram_addr, rxbuf, 4);
+        for(j = 0; j < 4; j++) {
+            transmitCommand[index + i * 4 + j] = rxbuf[j];
+        }
+        fram_addr += 4;
+    }
+    
+    index += read_iterations * read_iterations;
+    if(fram_addr >= 	max_sample * read_iterations) {
+        fram_addr = 0;
+        sample_req = 1;
+    }
 	return index;
 }
 
